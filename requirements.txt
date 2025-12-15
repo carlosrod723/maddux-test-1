@@ -1,0 +1,12 @@
+# Data manipulation & analysis
+pandas>=2.0.0
+
+# MLB data access (Statcast & FanGraphs)
+pybaseball>=2.2.7
+
+# Fuzzy string matching for player name reconciliation
+thefuzz>=0.22.1
+python-Levenshtein>=0.25.0  # Speed optimization for thefuzz
+
+# HTTP requests (pybaseball dependency, pinning for stability)
+requests>=2.31.0
