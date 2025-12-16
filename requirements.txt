@@ -1,3 +1,10 @@
+# ==============================================================================
+# MLB Hitter Analytics - 2024 Statcast & FanGraphs Data Pipeline
+# ==============================================================================
+# Dependencies for pulling, merging, and validating MLB hitter data
+# from Baseball Savant (Statcast) and FanGraphs sources.
+# ==============================================================================
+
 # Data manipulation & analysis
 pandas>=2.0.0
 
@@ -10,3 +17,13 @@ python-Levenshtein>=0.25.0  # Speed optimization for thefuzz
 
 # HTTP requests (pybaseball dependency, pinning for stability)
 requests>=2.31.0
+
+# ==============================================================================
+# Test 2: Database + Claude API
+# ==============================================================================
+
+# Claude API client
+anthropic>=0.39.0
+
+# Environment variable management
+python-dotenv>=1.0.0
