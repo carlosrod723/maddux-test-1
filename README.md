@@ -1,134 +1,115 @@
-# Maddux Test 1 & 2 - MLB Hitter Analytics
+# MADDUX Phase 1: MLB Hitter Analytics
 
-2024 MLB hitter data pipeline pulling from Baseball Savant (Statcast) and FanGraphs, with SQLite database and Claude API integration.
+Predictive analytics platform identifying MLB hitter breakouts through physical metrics.
 
-## Data Sources
+**MADDUX Score = Δ Max EV + (2.1 × Δ Hard Hit%)**
 
-| Source | Data |
-|--------|------|
-| Baseball Savant | Exit Velocity, Bat Tracking |
-| FanGraphs | Batting Stats, Plate Discipline |
+## Key Results
+
+| Metric | Result | Target |
+|--------|--------|--------|
+| Average Correlation | **0.410** | >0.15 |
+| Hit Rate (MADDUX >20) | **73.7%** | >65% |
+| Hit Rate (MADDUX >15) | **69.6%** | — |
+| Hit Rate (MADDUX >10) | **64.7%** | — |
+
+## Data Coverage
+
+- **Years**: 2015-2025
+- **Player-Seasons**: 5,178
+- **Delta Records**: 3,606 (consecutive year pairs)
+- **Unique Players**: 1,341
 
 ## Deliverables
 
-- **Google Sheet**: [View Data](https://docs.google.com/spreadsheets/d/1-YjA9YqWREQkxz1HCuTAueieFp5zj3y1d6sphsOXeU4/edit?usp=sharing)
-- **GitHub Repo**: CSV files + Python pipeline + Database + Claude API
+### 1. Data Pipeline
+- `pull_historical_data.py` - Baseball Savant data pull
+- `build_maddux_database.py` - Merge + delta calculations
+- `data/raw/` - Source CSVs (Savant + FanGraphs)
+- `data/processed/` - Merged datasets
 
-## Files
+### 2. SQLite Database (`maddux_db.db`)
 ```
-├── data/
-│   ├── test_exit_velocity.csv    # 284 players - Baseball Savant
-│   ├── test_bat_tracking.csv     # 650 players - Baseball Savant
-│   ├── test_batting_stats.csv    # 365 players - FanGraphs
-│   └── test_plate_discipline.csv # 365 players - FanGraphs
-├── merged_data.csv               # 284 players - All sources joined
-├── main.py                       # Test 1: Data pipeline script
-├── maddux_test.db                # Test 2: SQLite database
-├── calculate_scores.py           # Test 2: Score calculation script
-├── query_claude.py               # Test 2: Claude API script
-├── claude_response.txt           # Test 2: Saved Claude response
-└── requirements.txt              # Python dependencies
+players (1,341 rows)
+├── player_id (MLBAM ID)
+└── player_name
+
+player_seasons (5,178 rows)
+├── player_id, year, pa
+├── max_ev, hard_hit_pct, barrel_pct
+├── ops, obp, slg, wrc_plus
+└── team
+
+player_deltas (3,606 rows)
+├── player_id, year, prev_year, pa
+├── max_ev, prev_max_ev, delta_max_ev
+├── hard_hit_pct, prev_hard_hit_pct, delta_hard_hit_pct
+├── ops, prev_ops, delta_ops
+├── maddux_score
+└── team
 ```
 
-## Setup
+### 3. Claude API Integration
+- `query_maddux.py` - CLI natural language queries
+- Dashboard "Ask Claude" tab - Interactive queries
+
+### 4. Interactive Dashboard (`dashboard.py`)
+- **Scatter Analysis** - MADDUX vs OPS change with quadrant annotations
+- **Leaderboard** - Breakout/regression candidates by year
+- **Player Deep Dive** - Career trajectory + radar chart + AI analysis
+- **Model Validation** - Correlation by year + hit rate analysis
+- **Ask Claude** - Natural language database queries
+
+## Quick Start
 ```bash
-# Create virtual environment
+# Setup
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
+source venv/bin/activate
 pip install -r requirements.txt
 
-# Set environment variables
-export ANTHROPIC_API_KEY=your_api_key_here
+# Set API key
+export ANTHROPIC_API_KEY=your_key_here
+
+# Run dashboard
+streamlit run dashboard.py
 ```
 
-## Test 1: Data Pipeline
-```bash
-python main.py
+## File Structure
+```
+maddux-test-1/
+├── dashboard.py              # Interactive Streamlit dashboard
+├── maddux_db.db              # SQLite database
+├── build_maddux_database.py  # Data pipeline
+├── pull_historical_data.py   # Savant data pull
+├── query_maddux.py           # CLI Claude queries
+├── requirements.txt          # Dependencies
+├── data/
+│   ├── raw/                  # Source CSVs
+│   └── processed/            # Merged data
+└── .streamlit/
+    └── config.toml           # Theme config
 ```
 
-Pulls data from Baseball Savant and FanGraphs, merges into `merged_data.csv`.
+## Model Validation Summary
 
-## Test 2: Database + Claude API
+The MADDUX Hitter model shows **consistent predictive signal**:
 
-### Calculate Scores
-```bash
-python calculate_scores.py
-```
+- **Correlation (r = 0.41)**: Moderate positive relationship between physical metric improvements and OPS gains
+- **Hit Rate (74% at >20 threshold)**: Players with high MADDUX scores improve their OPS nearly 3 out of 4 times
+- **Stability**: Correlation remains positive across all 10 years (2016-2025)
 
-Creates SQLite database and calculates MADDUX OBP Score:
-```
-Score = BB% + (1.8 × Contact%)
-```
+### 2025 Top Breakout Candidates
 
-**Sample Output:**
-```
-Rank  Player                   BB%       Contact%    Score
-1     Steven Kwan              9.8       92.8        176.84
-2     Luis Arraez              3.6       94.2        173.16
-3     Geraldo Perdomo          9.3       89.9        171.12
-...
-```
+| Player | Team | MADDUX | Δ MaxEV | Δ HH% | Δ OPS |
+|--------|------|--------|---------|-------|-------|
+| Rice, Ben | NYY | 43.4 | +2.7 | +19.4 | +0.223 |
+| Story, Trevor | BOS | 43.2 | +6.5 | +17.5 | +0.008 |
+| Turang, Brice | MIL | 40.6 | +3.4 | +17.7 | +0.129 |
 
-### Query Claude
-```bash
-python query_claude.py
-```
+## Tech Stack
 
-Sends top 10 players to Claude API for breakout analysis. Response saved to `claude_response.txt`.
-
-## Merged Data Schema
-
-| Column | Source |
-|--------|--------|
-| player_name | Any |
-| player_id | Baseball Savant (MLBAM ID) |
-| pa | FanGraphs |
-| avg_bat_speed | Bat Tracking |
-| hard_hit_pct | Exit Velocity |
-| barrel_pct | Exit Velocity |
-| bb_pct | FanGraphs |
-| contact_pct | FanGraphs |
-| avg | FanGraphs |
-| obp | FanGraphs |
-| slg | FanGraphs |
-| iso | FanGraphs |
-
-## Database Schema
-```sql
-CREATE TABLE players (
-    player_id INTEGER PRIMARY KEY,
-    player_name TEXT NOT NULL
-);
-
-CREATE TABLE batting_2024 (
-    player_id INTEGER,
-    avg_bat_speed REAL,
-    hard_hit_pct REAL,
-    barrel_pct REAL,
-    bb_pct REAL,
-    contact_pct REAL,
-    avg REAL,
-    obp REAL,
-    slg REAL,
-    iso REAL,
-    FOREIGN KEY (player_id) REFERENCES players(player_id)
-);
-```
-
-## Validation
-
-### Test 1
-- ✅ 284 players (50+ required)
-- ✅ Valid 6-digit MLBAM player IDs
-- ✅ No duplicate players
-
-### Test 2
-- ✅ Database opens in SQLite
-- ✅ Players table has 284 rows
-- ✅ Batting table has 284 rows
-- ✅ Foreign key relationship valid
-- ✅ Score calculation returns correct top 10
-- ✅ Claude API runs without errors
-- ✅ Response saved to claude_response.txt
+- **Data**: Baseball Savant (Statcast), FanGraphs
+- **Database**: SQLite
+- **Dashboard**: Streamlit + Plotly
+- **AI**: Claude API (Haiku 4.5)
+- **Language**: Python 3.11+
