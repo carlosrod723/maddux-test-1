@@ -17,6 +17,10 @@ from matplotlib.colors import LinearSegmentedColormap
 
 load_dotenv()
 
+# Get API key from Streamlit secrets (cloud) or .env (local)
+if 'ANTHROPIC_API_KEY' in st.secrets:
+    os.environ['ANTHROPIC_API_KEY'] = st.secrets['ANTHROPIC_API_KEY']
+
 # Configuration
 DB_PATH = "maddux_db.db"
 st.set_page_config(
