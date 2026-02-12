@@ -1,17 +1,48 @@
-# MADDUX Phase 1: MLB Hitter Analytics
+# MADDUX Analytics: MLB Hitter Breakout Prediction
 
-Predictive analytics platform identifying MLB hitter breakouts through physical metrics.
+Predictive analytics platform testing whether physical batting metrics (exit velocity, hard hit rate, barrel rate) can forecast future MLB hitter performance (OPS).
 
-**MADDUX Score = Δ Max EV + (2.1 × Δ Hard Hit%)**
+## Phase 1: Original Formula Validation
 
-## Key Results
+**MADDUX Score = d Max EV + (2.1 x d Hard Hit%)**
 
-| Metric | Result | Target |
-|--------|--------|--------|
-| Average Correlation | **0.410** | >0.15 |
-| Hit Rate (MADDUX >20) | **73.7%** | >65% |
-| Hit Rate (MADDUX >15) | **69.6%** | — |
-| Hit Rate (MADDUX >10) | **64.7%** | — |
+The original delta-based formula shows strong *concurrent* correlation (r = 0.41) but **fails as a predictor**. When MADDUX(Year N) is used to predict OPS change in Year N+1, the correlation flips negative (r = -0.135). This is because year-over-year deltas regress to the mean.
+
+## Phase 2: Alternative Formulations and Causal Analysis
+
+Phase 2 tested alternative approaches, validated the Driveline causal thesis, and decomposed what actually drives predictive signal.
+
+### Key Findings
+
+| Analysis | Result |
+|----------|--------|
+| **Predictive Windows** | No window (1/2/3 year) fixes the delta-based formula |
+| **Best Predictor** | Combined Model (mean reversion + physical tools): r = 0.546 |
+| **Mean Reversion** | Explains ~90% of the underperformance gap signal (r = 0.493 alone) |
+| **Physical Tools** | Add modest but statistically significant incremental value (+0.068) |
+| **Driveline Chain** | Max EV -> Hard Hit % -> Barrel % -> OPS confirmed as forward-causal |
+| **Sprint Speed** | No Granger causality toward hitting metrics at any lag |
+
+### Alternative Formulations (Out-of-Sample Test, 2022-2024)
+
+| Formulation | r | Significant |
+|-------------|---|-------------|
+| Barrel Rate Delta | -0.232 | Yes (wrong direction) |
+| Original MADDUX | -0.154 | Yes (wrong direction) |
+| Absolute Levels (OLS) | 0.175 | Yes |
+| OLS Optimized Deltas | 0.237 | Yes |
+| Mean Reversion Baseline | 0.494 | Yes |
+| Underperformance Gap (Raw) | 0.513 | Yes |
+| Combined Model (MR + Tools) | 0.546 | Yes |
+
+### Granger Causality (Driveline Chain, Lag 1)
+
+| Link | Forward F | Reverse F | Direction |
+|------|-----------|-----------|-----------|
+| Max EV -> Hard Hit % | 140.8*** | 99.2*** | Bidirectional |
+| Hard Hit % -> Barrel % | 71.9*** | 44.1*** | Bidirectional |
+| Barrel % -> OPS | 45.6*** | 27.0*** | Bidirectional |
+| Max EV -> OPS (full chain) | 87.4*** | 1.6 n.s. | **Forward only** |
 
 ## Data Coverage
 
@@ -19,92 +50,74 @@ Predictive analytics platform identifying MLB hitter breakouts through physical 
 - **Player-Seasons**: 5,178
 - **Delta Records**: 3,606 (consecutive year pairs)
 - **Unique Players**: 1,341
+- **Sprint Speed Coverage**: 99.6%
 
-## Deliverables
+## Database Schema (`maddux_db.db`)
 
-### 1. Data Pipeline
-- `pull_historical_data.py` - Baseball Savant data pull
-- `build_maddux_database.py` - Merge + delta calculations
-- `data/raw/` - Source CSVs (Savant + FanGraphs)
-- `data/processed/` - Merged datasets
-
-### 2. SQLite Database (`maddux_db.db`)
 ```
 players (1,341 rows)
-├── player_id (MLBAM ID)
-└── player_name
+  player_id, player_name
 
-player_seasons (5,178 rows)
-├── player_id, year, pa
-├── max_ev, hard_hit_pct, barrel_pct
-├── ops, obp, slg, wrc_plus
-└── team
+player_seasons (5,178 rows, 15 columns)
+  player_id, year, pa
+  max_ev, hard_hit_pct, barrel_pct, sprint_speed
+  ops, obp, slg, wrc_plus, iso, bb_pct, k_pct
+  team
 
-player_deltas (3,606 rows)
-├── player_id, year, prev_year, pa
-├── max_ev, prev_max_ev, delta_max_ev
-├── hard_hit_pct, prev_hard_hit_pct, delta_hard_hit_pct
-├── ops, prev_ops, delta_ops
-├── maddux_score
-└── team
+player_deltas (3,606 rows, 33 columns)
+  player_id, year, prev_year, pa
+  current + prev + delta for: max_ev, hard_hit_pct, barrel_pct,
+    sprint_speed, ops, obp, slg, iso, bb_pct, k_pct
+  maddux_score
+  team
 ```
 
-### 3. Claude API Integration
-- `query_maddux.py` - CLI natural language queries
-- Dashboard "Ask Claude" tab - Interactive queries
+## File Structure
 
-### 4. Interactive Dashboard (`dashboard.py`)
-- **Scatter Analysis** - MADDUX vs OPS change with quadrant annotations
-- **Leaderboard** - Breakout/regression candidates by year
-- **Player Deep Dive** - Career trajectory + radar chart + AI analysis
-- **Model Validation** - Correlation by year + hit rate analysis
-- **Ask Claude** - Natural language database queries
+```
+maddux-test-1/
+├── dashboard.py                          # Interactive Streamlit dashboard
+├── maddux_db.db                          # SQLite database
+├── build_maddux_database.py              # Data pipeline (Savant + FanGraphs -> DB)
+├── pull_historical_data.py               # Baseball Savant data pull + sprint speed
+├── query_maddux.py                       # CLI Claude queries
+├── requirements.txt                      # Dependencies
+├── data/
+│   ├── raw/                              # Source CSVs (Savant, FanGraphs, Sprint Speed)
+│   └── processed/                        # Merged datasets
+├── docs/
+│   └── METRICS.md                        # Metrics glossary
+├── phase2_predictive_windows.py          # Predictive window analysis (1/2/3 year)
+├── phase2_alternative_formulations.py    # 7 alternative formulations with train/test
+├── phase2_granger_causality.py           # Driveline causal chain validation
+├── phase2_validate_gap_model.py          # Mean reversion decomposition
+├── phase2_report_charts.py               # Publication-quality report charts
+├── phase2_outputs/                       # All CSVs, PNGs, and report charts
+└── .streamlit/
+    └── config.toml                       # Theme config
+```
 
 ## Quick Start
+
 ```bash
 # Setup
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 
-# Set API key
+# Set API key (for Claude integration)
 export ANTHROPIC_API_KEY=your_key_here
 
 # Run dashboard
 streamlit run dashboard.py
+
+# Run Phase 2 analyses
+python phase2_predictive_windows.py
+python phase2_alternative_formulations.py
+python phase2_granger_causality.py
+python phase2_validate_gap_model.py
+python phase2_report_charts.py
 ```
-
-## File Structure
-```
-maddux-test-1/
-├── dashboard.py              # Interactive Streamlit dashboard
-├── maddux_db.db              # SQLite database
-├── build_maddux_database.py  # Data pipeline
-├── pull_historical_data.py   # Savant data pull
-├── query_maddux.py           # CLI Claude queries
-├── requirements.txt          # Dependencies
-├── data/
-│   ├── raw/                  # Source CSVs
-│   └── processed/            # Merged data
-└── .streamlit/
-    └── config.toml           # Theme config
-```
-
-## Model Validation Summary
-
-The MADDUX Hitter model shows **consistent predictive signal**:
-
-- **Correlation (r = 0.41)**: Moderate positive relationship between physical metric improvements and OPS gains
-- **Hit Rate (74% at >20 threshold)**: Players with high MADDUX scores improve their OPS nearly 3 out of 4 times
-- **Stability**: Correlation remains positive across all 10 years (2016-2025)
-
-### 2025 Top Breakout Candidates
-
-| Player | Team | MADDUX | Δ MaxEV | Δ HH% | Δ OPS |
-|--------|------|--------|---------|-------|-------|
-| Rice, Ben | NYY | 43.4 | +2.7 | +19.4 | +0.223 |
-| Story, Trevor | BOS | 43.2 | +6.5 | +17.5 | +0.008 |
-| Turang, Brice | MIL | 40.6 | +3.4 | +17.7 | +0.129 |
 
 ## Tech Stack
 
@@ -112,4 +125,5 @@ The MADDUX Hitter model shows **consistent predictive signal**:
 - **Database**: SQLite
 - **Dashboard**: Streamlit + Plotly
 - **AI**: Claude API (Haiku 4.5)
+- **Analysis**: pandas, numpy, scipy, matplotlib, seaborn
 - **Language**: Python 3.11+

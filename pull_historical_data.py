@@ -1,9 +1,11 @@
 # pull_historical_data.py
 
 """
-MADDUX Phase 1: Historical Data Pull (2015-2025)
+MADDUX Historical Data Pull (2015-2025)
 
 Pulls hitter data from Baseball Savant and FanGraphs for delta calculations.
+Phase 1: Statcast exit velocity, barrels
+Phase 2: Sprint speed (biomechanics proxy)
 """
 
 import requests
@@ -72,6 +74,49 @@ def pull_all_savant():
     return combined
 
 
+def pull_sprint_speed(year: int) -> pd.DataFrame:
+    """Pull sprint speed data from Baseball Savant."""
+    url = (
+        f'https://baseballsavant.mlb.com/leaderboard/sprint_speed'
+        f'?min_season={year}&max_season={year}&position=&team=&min=0&csv=true'
+    )
+
+    response = requests.get(url, headers=HEADERS)
+    response.raise_for_status()
+
+    df = pd.read_csv(StringIO(response.text))
+    df['year'] = year
+
+    return df[['player_id', 'year', 'sprint_speed']]
+
+
+def pull_all_sprint_speed():
+    """Pull sprint speed data for all years."""
+    print("=" * 60)
+    print("Pulling Baseball Savant Sprint Speed (2015-2025)")
+    print("=" * 60)
+
+    all_data = []
+
+    for year in YEARS:
+        try:
+            df = pull_sprint_speed(year)
+            all_data.append(df)
+            print(f"  ✓ {year}: {len(df)} players")
+            time.sleep(1)
+        except Exception as e:
+            print(f"  ✗ {year}: {e}")
+
+    combined = pd.concat(all_data, ignore_index=True)
+    output_path = OUTPUT_DIR / "savant_sprint_speed_2015_2025.csv"
+    combined.to_csv(output_path, index=False)
+
+    print(f"\n  Saved: {output_path}")
+    print(f"  Total rows: {len(combined)}")
+
+    return combined
+
+
 def pull_fangraphs_batting(year: int) -> pd.DataFrame:
     """
     Pull batting stats from FanGraphs.
@@ -87,21 +132,20 @@ def pull_fangraphs_batting(year: int) -> pd.DataFrame:
         return pd.DataFrame()
 
 
-def main():
+def main(sprint_speed_only=False):
     print("\n" + "=" * 60)
-    print("MADDUX Phase 1: Historical Data Pull")
+    print("MADDUX Historical Data Pull")
     print("=" * 60 + "\n")
-    
-    # Pull Savant data
-    savant_df = pull_all_savant()
-    
-    print("\n" + "=" * 60)
-    print("Summary")
-    print("=" * 60)
-    print(f"  Years: 2015-2025")
-    print(f"  Total player-seasons: {len(savant_df)}")
-    print(f"  Unique players: {savant_df['player_id'].nunique()}")
-    
+
+    if not sprint_speed_only:
+        # Pull Savant statcast data
+        savant_df = pull_all_savant()
+        print(f"\n  Statcast: {len(savant_df)} player-seasons, {savant_df['player_id'].nunique()} unique players")
+
+    # Pull sprint speed data
+    sprint_df = pull_all_sprint_speed()
+    print(f"\n  Sprint speed: {len(sprint_df)} player-seasons, {sprint_df['player_id'].nunique()} unique players")
+
     print("\n✅ Savant data complete!")
     print("\n⚠️  FanGraphs data requires manual export (Cloudflare blocks automation)")
     print("   Export from: https://www.fangraphs.com/leaders/major-league")

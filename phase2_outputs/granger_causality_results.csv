@@ -1,0 +1,37 @@
+x_causes_y,x,y,lag,F_stat,p_value,significant,n,dfn,dfd
+Max EV → Hard Hit %,max_ev,hard_hit_pct,1,140.8051,0.0,True,2372,1,2369
+Max EV → Hard Hit %,max_ev,hard_hit_pct,2,33.6462,0.0,True,1573,2,1568
+Max EV → Hard Hit %,max_ev,hard_hit_pct,3,14.9561,0.0,True,1011,3,1004
+Hard Hit % → Max EV,hard_hit_pct,max_ev,1,99.2065,0.0,True,2372,1,2369
+Hard Hit % → Max EV,hard_hit_pct,max_ev,2,14.4302,1e-06,True,1573,2,1568
+Hard Hit % → Max EV,hard_hit_pct,max_ev,3,7.2723,7.9e-05,True,1011,3,1004
+Hard Hit % → Barrel %,hard_hit_pct,barrel_pct,1,71.9449,0.0,True,2372,1,2369
+Hard Hit % → Barrel %,hard_hit_pct,barrel_pct,2,6.5383,0.001487,True,1573,2,1568
+Hard Hit % → Barrel %,hard_hit_pct,barrel_pct,3,4.1257,0.0064,True,1011,3,1004
+Barrel % → Hard Hit %,barrel_pct,hard_hit_pct,1,44.0973,0.0,True,2372,1,2369
+Barrel % → Hard Hit %,barrel_pct,hard_hit_pct,2,8.692,0.000176,True,1573,2,1568
+Barrel % → Hard Hit %,barrel_pct,hard_hit_pct,3,2.4771,0.059982,False,1011,3,1004
+Barrel % → OPS,barrel_pct,ops,1,45.6051,0.0,True,2372,1,2369
+Barrel % → OPS,barrel_pct,ops,2,7.178,0.000789,True,1573,2,1568
+Barrel % → OPS,barrel_pct,ops,3,4.3344,0.004799,True,1011,3,1004
+OPS → Barrel %,ops,barrel_pct,1,26.9623,0.0,True,2372,1,2369
+OPS → Barrel %,ops,barrel_pct,2,4.3534,0.013019,True,1573,2,1568
+OPS → Barrel %,ops,barrel_pct,3,3.3494,0.01854,True,1011,3,1004
+Max EV → OPS,max_ev,ops,1,87.4311,0.0,True,2372,1,2369
+Max EV → OPS,max_ev,ops,2,17.9598,0.0,True,1573,2,1568
+Max EV → OPS,max_ev,ops,3,7.9849,2.9e-05,True,1011,3,1004
+OPS → Max EV,ops,max_ev,1,1.6401,0.200436,False,2372,1,2369
+OPS → Max EV,ops,max_ev,2,3.3196,0.036422,True,1573,2,1568
+OPS → Max EV,ops,max_ev,3,1.5337,0.204153,False,1011,3,1004
+Sprint Speed → Hard Hit %,sprint_speed,hard_hit_pct,1,0.2475,0.618872,False,2372,1,2369
+Sprint Speed → Hard Hit %,sprint_speed,hard_hit_pct,2,0.9497,0.387068,False,1573,2,1568
+Sprint Speed → Hard Hit %,sprint_speed,hard_hit_pct,3,0.5369,0.657109,False,1011,3,1004
+Hard Hit % → Sprint Speed,hard_hit_pct,sprint_speed,1,3.3721,0.066434,False,2372,1,2369
+Hard Hit % → Sprint Speed,hard_hit_pct,sprint_speed,2,1.1042,0.331723,False,1573,2,1568
+Hard Hit % → Sprint Speed,hard_hit_pct,sprint_speed,3,1.3195,0.266609,False,1011,3,1004
+Sprint Speed → OPS,sprint_speed,ops,1,0.4221,0.515974,False,2372,1,2369
+Sprint Speed → OPS,sprint_speed,ops,2,4.7641,0.008655,True,1573,2,1568
+Sprint Speed → OPS,sprint_speed,ops,3,1.1715,0.319436,False,1011,3,1004
+OPS → Sprint Speed,ops,sprint_speed,1,7.9063,0.004967,True,2372,1,2369
+OPS → Sprint Speed,ops,sprint_speed,2,3.747,0.023799,True,1573,2,1568
+OPS → Sprint Speed,ops,sprint_speed,3,0.8725,0.454822,False,1011,3,1004

@@ -25,3 +25,6 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+
+# Phase 2: unpolished charts (report charts in phase2_report/ are canonical)
+phase2_outputs/*.png

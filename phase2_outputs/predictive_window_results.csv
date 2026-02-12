@@ -1,0 +1,5 @@
+window,sample_size,correlation_r,p_value,significant,hit_rate_gt20,hit_rate_gt20_n
+same_year,2828,0.408,0.0,True,0.7791,172
+1_year,1828,-0.1347,0.0,True,0.2909,110
+2_year,1175,0.0294,0.313331,False,0.5,18
+3_year,728,-0.0211,0.569364,False,0.0,1

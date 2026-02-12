@@ -17,7 +17,7 @@ DATA_PATH = "merged_data.csv"
 
 
 def create_database():
-    """Create SQLite database with schema per Matt's spec."""
+    """Create SQLite database with schema per spec."""
     print("📦 Creating database...")
     
     conn = sqlite3.connect(DB_PATH)

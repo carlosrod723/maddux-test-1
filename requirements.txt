@@ -9,6 +9,7 @@
 pandas>=2.0.0
 plotly>=5.18.0
 matplotlib>=3.7.0
+seaborn>=0.12.0
 
 # MLB data access (Statcast & FanGraphs)
 pybaseball>=2.2.7
