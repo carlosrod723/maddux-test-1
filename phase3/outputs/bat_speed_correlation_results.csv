@@ -1,0 +1,4 @@
+subset,n,pearson_r,p_value,r_squared,significant
+2024,485,0.7741,0.0,0.5992,Yes
+2025,486,0.752,0.0,0.5655,Yes
+Combined (2024-2025),971,0.7639,0.0,0.5835,Yes

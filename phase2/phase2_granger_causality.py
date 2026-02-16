@@ -23,8 +23,9 @@ import matplotlib.pyplot as plt
 from scipy.stats import f as f_dist
 from pathlib import Path
 
-DB_PATH = "maddux_db.db"
-OUTPUT_DIR = Path("phase2_outputs")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = str(PROJECT_ROOT / "maddux_db.db")
+OUTPUT_DIR = Path(__file__).resolve().parent / "outputs"
 OUTPUT_DIR.mkdir(exist_ok=True)
 
 MIN_PA = 200

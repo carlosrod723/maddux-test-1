@@ -12,8 +12,9 @@ import pandas as pd
 from pathlib import Path
 
 # Configuration
-DB_PATH = "maddux_test.db"
-DATA_PATH = "merged_data.csv"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = str(PROJECT_ROOT / "maddux_test.db")
+DATA_PATH = str(PROJECT_ROOT / "merged_data.csv")
 
 
 def create_database():

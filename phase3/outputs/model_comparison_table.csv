@@ -1,0 +1,13 @@
+dimension,original_maddux,driveline_thesis,phase2_combined_model
+Core Thesis,Players whose exit velocity and hard contact rate are improving will see future OPS gains,"Bat speed drives exit velocity, which drives hard contact, which drives offensive production",Players whose physical tools suggest higher OPS than they actually produced will regress upward
+Formula,MADDUX = dMax EV + (2.1 x dHard Hit%),"Bat Speed -> Max EV -> Hard Hit% -> Barrel% -> OPS (causal chain, no single formula)","Gap = (Expected OPS from tools) - (Actual OPS), decomposed into Mean Reversion + Tools Signal"
+Input Metrics,"Max Exit Velocity, Hard Hit %","Bat Speed, Max EV, Hard Hit %, Barrel %","Barrel %, Max EV, Hard Hit %, Career Mean OPS, Current OPS"
+Input Type,Year-over-year DELTAS (Year N minus Year N-1),ABSOLUTE LEVELS (current-year values at each chain link),"GAP-BASED (deviation from tool-based expectation, using absolute levels)"
+Prediction Target,Next-year OPS change (dOPS Year N+1),Next-year OPS (via forward causal chain),Next-year OPS change (dOPS Year N+1)
+Predictive r (out-of-sample),r = -0.135 (anti-predictive),Not directly testable as a single score (validated as causal chain: F = 87.4 forward),r = +0.561 (best performer)
+Same-Year r (concurrent),r = +0.408,"N/A (framework, not a formula)",N/A (designed as a predictive model)
+Why It Works / Fails,FAILS: Deltas capture noise + regression to mean. Players who improved most are most likely to regress.,"WORKS as causal framework: Max EV Granger-causes OPS (F=87.4 forward, F=1.6 reverse). Chain is directional.",WORKS: 88% of signal is mean reversion (players bounce back from down years). 12% is tools signal (physical metrics identify WHICH players bounce back). Both components are significant.
+Bat Speed Role,Not included (bat speed data unavailable pre-2024),Top of the causal chain (bat speed is the root input that Driveline trains),"Proxied by Max EV (r = 0.764 with bat speed, validated in Phase 3). Max EV serves as the historical stand-in."
+Barrel Rate Role,Not included,Middle of causal chain (Hard Hit% -> Barrel% -> OPS),Included as input to tools-based expected OPS. Stickiest power metric (r ~ 0.80 YoY).
+Sprint Speed Role,Not included,Tested as biomechanics proxy,Excluded: no Granger causality toward hitting metrics at any lag
+Alignment with Driveline Logic,"Partially aligned: uses correct metrics (EV, hard contact) but wrong input type (deltas instead of levels)",Fully aligned by definition (this IS the Driveline framework),"Strongly aligned: uses absolute tool levels, validated causal chain direction, adds mean reversion baseline"

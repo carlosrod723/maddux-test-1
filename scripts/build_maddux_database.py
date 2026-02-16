@@ -14,10 +14,11 @@ import sqlite3
 from pathlib import Path
 
 # Configuration
-RAW_DIR = Path("data/raw")
-PROCESSED_DIR = Path("data/processed")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+RAW_DIR = PROJECT_ROOT / "data" / "raw"
+PROCESSED_DIR = PROJECT_ROOT / "data" / "processed"
 PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
-DB_PATH = "maddux_db.db"
+DB_PATH = str(PROJECT_ROOT / "maddux_db.db")
 
 
 def load_and_merge_data():

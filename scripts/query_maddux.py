@@ -9,12 +9,14 @@ Natural language queries against the MADDUX database.
 import sqlite3
 import os
 import json
+from pathlib import Path
 from dotenv import load_dotenv
 from anthropic import Anthropic
 
 load_dotenv()
 
-DB_PATH = "maddux_db.db"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = str(PROJECT_ROOT / "maddux_db.db")
 
 
 def get_database_schema():

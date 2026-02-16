@@ -17,7 +17,8 @@ import time
 # Configuration
 YEARS = range(2015, 2026)  # 2015-2025
 MIN_PA = 50  # Lower threshold to capture more players, filter later
-OUTPUT_DIR = Path("data/raw")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+OUTPUT_DIR = PROJECT_ROOT / "data" / "raw"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 HEADERS = {

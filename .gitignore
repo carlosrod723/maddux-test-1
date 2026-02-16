@@ -26,5 +26,11 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Phase 2: unpolished charts (report charts in phase2_report/ are canonical)
-phase2_outputs/*.png
+# Phase 2: unpolished charts (report charts in reports/charts/ are canonical)
+phase2/outputs/*.png
+
+# Legacy files (Test 1/2 artifacts)
+maddux_test.db
+merged_data.csv
+claude_response.txt
+*.db.bak

@@ -22,13 +22,15 @@ MIN_PA = 200
 MIN_PLAYERS = 50
 
 # Output paths
-OUTPUT_DIR = "data"
+from pathlib import Path as _Path
+PROJECT_ROOT = _Path(__file__).resolve().parent.parent
+OUTPUT_DIR = str(PROJECT_ROOT / "data")
 FILES = {
     "exit_velocity": f"{OUTPUT_DIR}/test_exit_velocity.csv",
     "bat_tracking": f"{OUTPUT_DIR}/test_bat_tracking.csv",
     "batting_stats": f"{OUTPUT_DIR}/test_batting_stats.csv",
     "plate_discipline": f"{OUTPUT_DIR}/test_plate_discipline.csv",
-    "merged": "merged_data.csv"
+    "merged": str(PROJECT_ROOT / "merged_data.csv")
 }
 
 

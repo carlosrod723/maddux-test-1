@@ -15,8 +15,10 @@ from anthropic import Anthropic
 load_dotenv()
 
 # Configuration
-DB_PATH = "maddux_test.db"
-OUTPUT_FILE = "claude_response.txt"
+from pathlib import Path
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = str(PROJECT_ROOT / "maddux_test.db")
+OUTPUT_FILE = str(PROJECT_ROOT / "claude_response.txt")
 
 
 def get_top_10():

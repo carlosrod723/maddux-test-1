@@ -1,0 +1,7 @@
+link,test_type,forward_stat,reverse_stat,verdict
+Bat Speed -> Max EV,Pearson correlation (2024-2025),r = 0.764 (n=971),N/A (same metric pair),Strong proxy relationship; Max EV viable as historical bat speed stand-in
+Max EV -> Hard Hit %,Granger causality (Lag 1),F = 140.8***,F = 99.2***,Bidirectional but forward stronger (1.42x ratio)
+Hard Hit % -> Barrel %,Granger causality (Lag 1),F = 71.9***,F = 44.1***,Bidirectional but forward stronger (1.63x ratio)
+Barrel % -> OPS,Granger causality (Lag 1),F = 45.6***,F = 27.0***,Bidirectional but forward stronger (1.69x ratio)
+Max EV -> OPS (full chain),Granger causality (Lag 1),F = 87.4***,F = 1.6 n.s.,"ONE-DIRECTIONAL: EV predicts OPS, OPS does not predict EV (54.6x ratio)"
+Sprint Speed -> Hard Hit %,Granger causality (Lag 1-3),Not significant at any lag,Not significant at any lag,No causal relationship; sprint speed is not a hitting proxy

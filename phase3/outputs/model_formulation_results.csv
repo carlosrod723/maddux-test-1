@@ -1,0 +1,8 @@
+formulation,input_type,test_r,test_n,significant,verdict
+Original MADDUX (dMax EV + 2.1 x dHH%),Deltas,-0.154,708,Yes (wrong direction),Anti-predictive
+Barrel Rate Delta (dBarrel%),Deltas,-0.232,708,Yes (wrong direction),Worse than original
+OLS Optimized Deltas,Deltas (weighted),0.237,708,Yes,Positive but weak; learned weights are mean-reversion in disguise
+"Absolute Levels (Barrel%, Max EV, HH%)",Levels,0.175,708,Yes,Modest signal from raw tools
+Mean Reversion Baseline,Gap (career mean - actual),0.494,652,Yes,Strong; captures most of the underperformance gap signal
+Underperformance Gap (raw),Gap (expected - actual),0.513,708,Yes,Strong but ~88% is mean reversion
+Combined Model (MR + Tools),Gap (decomposed),0.561,652,Yes,Best performer; tools add +0.068 over mean reversion alone

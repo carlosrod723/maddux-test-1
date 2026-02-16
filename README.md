@@ -76,23 +76,38 @@ player_deltas (3,606 rows, 33 columns)
 
 ```
 maddux-test-1/
+├── README.md
+├── requirements.txt
+├── maddux_db.db                          # SQLite database (5,178 player-seasons)
 ├── dashboard.py                          # Interactive Streamlit dashboard
-├── maddux_db.db                          # SQLite database
-├── build_maddux_database.py              # Data pipeline (Savant + FanGraphs -> DB)
-├── pull_historical_data.py               # Baseball Savant data pull + sprint speed
-├── query_maddux.py                       # CLI Claude queries
-├── requirements.txt                      # Dependencies
 ├── data/
 │   ├── raw/                              # Source CSVs (Savant, FanGraphs, Sprint Speed)
 │   └── processed/                        # Merged datasets
-├── docs/
-│   └── METRICS.md                        # Metrics glossary
-├── phase2_predictive_windows.py          # Predictive window analysis (1/2/3 year)
-├── phase2_alternative_formulations.py    # 7 alternative formulations with train/test
-├── phase2_granger_causality.py           # Driveline causal chain validation
-├── phase2_validate_gap_model.py          # Mean reversion decomposition
-├── phase2_report_charts.py               # Publication-quality report charts
-├── phase2_outputs/                       # All CSVs, PNGs, and report charts
+├── scripts/
+│   ├── build_maddux_database.py          # Data pipeline (Savant + FanGraphs -> DB)
+│   ├── pull_historical_data.py           # Baseball Savant data pull + sprint speed
+│   ├── query_maddux.py                   # CLI Claude queries
+│   ├── query_claude.py                   # Claude API integration (Test 2)
+│   ├── calculate_scores.py              # MADDUX score calculation (Test 2)
+│   ├── main.py                          # Original data pipeline (Test 1)
+│   └── verify_maddux_methodology.py     # Methodology verification
+├── phase2/
+│   ├── phase2_predictive_windows.py      # Predictive window analysis (1/2/3 year)
+│   ├── phase2_alternative_formulations.py # 7 alternative formulations with train/test
+│   ├── phase2_granger_causality.py       # Driveline causal chain validation
+│   ├── phase2_validate_gap_model.py      # Mean reversion decomposition
+│   ├── phase2_report_charts.py           # Publication-quality report charts
+│   └── outputs/                          # CSVs and PNGs from Phase 2 analyses
+├── phase3/
+│   ├── phase3_bat_speed_correlation.py   # Bat speed vs Max EV correlation
+│   ├── phase3_model_comparison.py        # Model comparison tables
+│   ├── MADDUX_V2_DEFINITION.md           # MADDUX v2 formula definition
+│   ├── MILB_DATA_AUDIT.md                # MiLB data availability audit
+│   ├── METRICS.md                        # Metrics glossary
+│   └── outputs/                          # CSVs and PNGs from Phase 3 analyses
+├── reports/
+│   ├── MADDUX_Phase_2__*.pdf             # Phase 2 deliverable report
+│   └── charts/                           # Publication-quality report charts
 └── .streamlit/
     └── config.toml                       # Theme config
 ```
@@ -112,11 +127,15 @@ export ANTHROPIC_API_KEY=your_key_here
 streamlit run dashboard.py
 
 # Run Phase 2 analyses
-python phase2_predictive_windows.py
-python phase2_alternative_formulations.py
-python phase2_granger_causality.py
-python phase2_validate_gap_model.py
-python phase2_report_charts.py
+python phase2/phase2_predictive_windows.py
+python phase2/phase2_alternative_formulations.py
+python phase2/phase2_granger_causality.py
+python phase2/phase2_validate_gap_model.py
+python phase2/phase2_report_charts.py
+
+# Run Phase 3 analyses
+python phase3/phase3_bat_speed_correlation.py
+python phase3/phase3_model_comparison.py
 ```
 
 ## Tech Stack
